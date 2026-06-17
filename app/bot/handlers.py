@@ -73,6 +73,7 @@ async def cmd_start(message: Message):
         parse_mode="Markdown"
     )
 
+# Обрабатывает команду и с эмодзи, и без
 @bot_router.message(F.text.in_(["📋 Мой список", "Мой список"]))
 async def show_wishlist(message: Message):
     games = await asyncio.to_thread(db_get_user_games, message.from_user.id)
@@ -81,24 +82,26 @@ async def show_wishlist(message: Message):
         await message.answer("Твой список отслеживания пока пуст.")
         return
         
-    response = "📋 **Твои отслеживаемые игры:**\n\n"
+    response = "Твои отслеживаемые игры:\n\n"
     for game in games:
         response += (
-            f"🔹 **{game['title']}**\n"
+            f"**{game['title']}**\n"
             f"Цена: {game['current_price']} руб. (Скидка: {game['discount_percent']}%)\n"
             f"ID: `{game['steam_app_id']}`\n\n"
         )
     await message.answer(response, parse_mode="Markdown")
 
+# Обрабатывает команду и с эмодзи, и без
 @bot_router.message(F.text.in_(["❓ Помощь", "Помощь"]))
 async def cmd_help(message: Message):
     await message.answer(
         "Как пользоваться ботом:\n\n"
         "1. Отправь ID игры (цифры из ссылки Steam) или полную ссылку на игру, чтобы начать отслеживание.\n"
-        "2. Нажми '📋 Мой список', чтобы увидеть текущие цены.\n"
-        "3. Нажми '🗑 Удалить игру', а затем отправь ID, чтобы убрать её."
+        "2. Нажми 'Мой список', чтобы увидеть текущие цены.\n"
+        "3. Нажми 'Удалить игру', а затем отправь ID, чтобы убрать её."
     )
 
+# Обрабатывает команду и с эмодзи, и без
 @bot_router.message(F.text.in_(["🗑 Удалить игру", "Удалить игру"]))
 async def delete_prompt(message: Message):
     await message.answer("Чтобы удалить игру, отправь команду `/del ID` (например: `/del 2357570`).", parse_mode="Markdown")
@@ -118,7 +121,7 @@ async def cmd_delete(message: Message):
 async def process_game_input(message: Message):
     text = message.text.strip()
     
-    # Защита от перехвата системных кнопок (с эмодзи и без)
+    # Полный список системных фраз (с эмодзи и без), которые бот должен игнорировать в этом хэндлере
     if text in ["📋 Мой список", "Мой список", "❓ Помощь", "Помощь", "🗑 Удалить игру", "Удалить игру"]:
         return
 
@@ -164,4 +167,4 @@ async def process_game_input(message: Message):
         await message.answer("Произошла ошибка при добавлении игры.")
     else:
         title, price = res
-        await message.answer(f"✅ Игра **{title}** добавлена!\nТекущая цена: {price} руб.", parse_mode="Markdown")
+        await message.answer(f"Игра **{title}** добавлена!\nТекущая цена: {price} руб.", parse_mode="Markdown")

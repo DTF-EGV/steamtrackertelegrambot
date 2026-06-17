@@ -9,7 +9,7 @@ def fetch_and_update_games(bot: Bot):
         games = db.query(Game).all()
         
         for game in games:
-            # Создаем временный цикл событий для вызова асинхронного парсера внутри потока
+            
             loop = asyncio.new_event_loop()
             steam_data = loop.run_until_complete(steam_service.get_game_details(game.steam_app_id))
             loop.close()

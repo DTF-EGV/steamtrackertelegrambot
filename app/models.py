@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.database import Base
 
-# Связующая таблица для отношения Многие-ко-Многим (User <-> Game)
+
 wishlist_association = Table(
     "wishlists",
     Base.metadata,
@@ -15,12 +15,12 @@ wishlist_association = Table(
 class User(Base):
     __tablename__ = "users"
 
-    # Telegram ID бывает очень большим, поэтому используем BigInteger
+    
     telegram_id = Column(BigInteger, primary_key=True, index=True)
     username = Column(String, nullable=True)
     first_name = Column(String, nullable=True)
     
-    # Связь с играми, которые отслеживает пользователь
+    
     tracked_games = relationship(
         "Game", 
         secondary=wishlist_association, 
